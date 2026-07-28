@@ -96,7 +96,7 @@ flowchart LR
 | -------------------------------------------------------------------- | ------------------------------------------------------------- | --- |
 | [innolive-server](https://github.com/team-framework/innolive-server) | WebRTC 미디어 서버 (Go) — 세션·시그널링·트랜스코딩·AI 워커 풀·RTMP 송출            | 공개  |
 | [innolive-ai](https://github.com/team-framework/innolive-ai)         | AI 추론 서버 (Python) — 탐지·추적·신원 매칭·모자이크 합성 gRPC 서비스              | 공개  |
-| [innolive-client](https://github.com/team-framework/innolive-client) | 네이티브 멀티플랫폼 클라이언트 모노레포 (web · macOS · iOS · Android · Windows) | 비공개 |
+| [innolive-client](https://github.com/team-framework/innolive-client) | 네이티브 멀티플랫폼 클라이언트 모노레포 (web · macOS · iOS · Android · Windows) | 공개  |
   
 ---  
   
@@ -151,16 +151,17 @@ flowchart LR
   
 ### 사용한 AI 모델  
   
-| 모델                                                 | 용도                                                                                                                                   | 출처 · 라이선스                                                                                                                                                                |
-| -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| YOLO26n-seg 얼굴 세그멘테이션 (`best.pt`)              | 프레임별 얼굴 마스크 검출                                                                                                                       | Ultralytics `yolo26n-seg` 사전학습 가중치에 WIDER FACE 파생 데이터셋을 파인튜닝한 자체 체크포인트 (100 epochs · imgsz 640) — AGPL-3.0                                                           |
-| BoT-SORT                                           | 스트림별 얼굴 트랙 유지 — Kalman filter + IoU 연관(LAPJV) + GMC(sparseOptFlow) 카메라 모션 보상. ReID 미사용                                           | Ultralytics 내장, AGPL-3.0                                                                                                                                                 |
-| AdaFace ViT-Base KP-RPE (WebFace12M)               | 등록 인물 512-D 임베딩 · 비식별화 제외 판정                                                                                                         | [AdaFace](https://github.com/mk-minchul/AdaFace) — 학습 방법 · [CVLFace](https://github.com/mk-minchul/CVLface) — ViT KP-RPE 구현체와 가중치 출처. 코드 MIT, 가중치는 학습 데이터 라이선스 준수 필요 |
-| AdaFace IR-18 / IR-50 / IR-101                 | 선택적 대체 백본 (`--adaface-architecture`로 선택, 기본 경로 아님)                                                                              | [AdaFace](https://github.com/mk-minchul/AdaFace) — 코드 MIT. IR-18 CASIA / WebFace4M 체크포인트 출처는 `models/README.md`에 명시                                                  |
-| YuNet (`face_detection_yunet_2023mar`)             | 얼굴 5점 랜드마크 검출 → 112×112 정렬                                                                                                           | [OpenCV Zoo](https://github.com/opencv/opencv_zoo), MIT                                                                                                                  |
-| MediaPipe BlazeFace short-range                    | 웹 얼굴 등록 화면의 브라우저 측 얼굴 검출                                                                                                             | Google MediaPipe, Apache-2.0                                                                                                                                             |
-| Apple Vision (`VNDetectFaceRectangles`)            | macOS 얼굴 등록 화면의 온디바이스 얼굴 검출                                                                                                          | Apple 시스템 프레임워크                                                                                                                                                          |
-| TensorRT (+ ONNX · onnxslim · NVIDIA ModelOpt) | FP16 고정배치 추론 최적화 (NVIDIA 전용 경로) — `best.pt` → ONNX → onnxslim 단순화 → ModelOpt AutoCast FP16 → TensorRT 엔진(static batch 1 · 640px) | NVIDIA, 독자 라이선스                                                                                                                                                          |
+| 모델                                             | 용도                                                                                                                               | 출처 · 라이선스                                                                                                                                                            |
+| ---------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| YOLO26n-seg 얼굴 세그멘테이션 (`best.pt`)              | 프레임별 얼굴 마스크 검출                                                                                                                   | Ultralytics `yolo26n-seg` 사전학습 가중치에 WIDER FACE 파생 데이터셋을 파인튜닝한 자체 체크포인트 (100 epochs · imgsz 640) — AGPL-3.0                                                           |
+| SAM 3.1                                        | WIDER FACE 데이터셋의 Bbox annotation을 Segmentation mask annotation으로 변환 (pseudo mask generation) — 학습 데이터 준비 단계에만 사용, 런타임 미포함        | [facebook/sam3.1](https://huggingface.co/facebook/sam3.1) — SAM License (연구 및 상업적 활용 가능)                                                                             |
+| BoT-SORT                                       | 스트림별 얼굴 트랙 유지 — Kalman filter + IoU 연관(LAPJV) + GMC(sparseOptFlow) 카메라 모션 보상. ReID 미사용                                           | Ultralytics 내장, AGPL-3.0                                                                                                                                             |
+| AdaFace ViT-Base KP-RPE (WebFace12M)           | 등록 인물 512-D 임베딩 · 비식별화 제외 판정                                                                                                     | [AdaFace](https://github.com/mk-minchul/AdaFace) — 학습 방법 · [CVLFace](https://github.com/mk-minchul/CVLface) — ViT KP-RPE 구현체와 가중치 출처. 코드 MIT, 가중치는 학습 데이터 라이선스 준수 필요 |
+| AdaFace IR-18 / IR-50 / IR-101                 | 선택적 대체 백본 (`--adaface-architecture`로 선택, 기본 경로 아님)                                                                               | [AdaFace](https://github.com/mk-minchul/AdaFace) — 코드 MIT. IR-18 CASIA / WebFace4M 체크포인트 출처는 `models/README.md`에 명시                                                  |
+| YuNet (`face_detection_yunet_2023mar`)         | 얼굴 5점 랜드마크 검출 → 112×112 정렬                                                                                                       | [OpenCV Zoo](https://github.com/opencv/opencv_zoo), MIT                                                                                                              |
+| MediaPipe BlazeFace short-range                | 웹 얼굴 등록 화면의 브라우저 측 얼굴 검출                                                                                                         | Google MediaPipe, Apache-2.0                                                                                                                                         |
+| Apple Vision (`VNDetectFaceRectangles`)        | macOS 얼굴 등록 화면의 온디바이스 얼굴 검출                                                                                                      | Apple 시스템 프레임워크                                                                                                                                                      |
+| TensorRT (+ ONNX · onnxslim · NVIDIA ModelOpt) | FP16 고정배치 추론 최적화 (NVIDIA 전용 경로) — `best.pt` → ONNX → onnxslim 단순화 → ModelOpt AutoCast FP16 → TensorRT 엔진(static batch 1 · 640px) | NVIDIA, 독자 라이선스                                                                                                                                                      |
   
 모델 가중치의 원저작자 고지와 라이선스 전문은 `innolive-ai/THIRD_PARTY_NOTICES.md`에, 체크포인트 출처·SHA-256은 `innolive-ai/models/README.md`에 있습니다. 가중치 파일 자체는 재배포하지 않고 출처 링크와 해시만 제공합니다.  
   
@@ -249,15 +250,15 @@ flowchart LR
   
 ## 라이선스  
   
-InnoLive는 저장소마다 공개 범위와 라이선스가 다릅니다.  
+InnoLive는 세 저장소를 모두 공개하며, 저장소마다 라이선스가 다릅니다.  
   
 | 저장소 | 공개 | 라이선스 |  
 | --- | --- | --- |  
-| `innolive-ai` | 공개 | AGPL-3.0 — Ultralytics를 사용하는 파생 저작물이므로 동일 라이선스로 배포합니다 |  
-| `innolive-server` | 공개 | Apache-2.0 |  
-| `innolive-client` | 비공개 | 배포 인프라 정보가 포함되어 있어 공개하지 않습니다 |  
+| [`innolive-ai`](https://github.com/team-framework/innolive-ai) | 공개 | AGPL-3.0 — Ultralytics를 사용하는 파생 저작물이므로 동일 라이선스로 배포합니다 |  
+| [`innolive-server`](https://github.com/team-framework/innolive-server) | 공개 | Apache-2.0 |  
+| [`innolive-client`](https://github.com/team-framework/innolive-client) | 공개 | Apache-2.0 |  
   
-`innolive-client`는 배포 인프라 정보가 포함되어 있어 비공개로 운영합니다. 심사나 검토를 위해 열람이 필요하신 경우 [**gogror0987@dgsw.hs.kr**](mailto:gogror0987@dgsw.hs.kr) 로 연락 주시면 읽기 권한을 부여해 드리겠습니다.  
+세 저장소 모두 공개되어 있어 별도 권한 요청 없이 열람하실 수 있습니다. 문의가 필요하신 경우 [**gogror0987@dgsw.hs.kr**](mailto:gogror0987@dgsw.hs.kr) 로 연락 주시면 됩니다.  
   
 서드파티 라이브러리와 모델의 라이선스 고지는 위 "AI 사용 내역"과 각 저장소의 `THIRD_PARTY_NOTICES.md`에 있습니다. AdaFace 계열 모델 가중치는 학습 데이터의 라이선스를 따라야 하므로 저장소에 재배포하지 않고, 공식 출처 링크와 SHA-256 해시만 제공합니다.  
   
