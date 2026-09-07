@@ -6,7 +6,7 @@ AI 기반 실시간 비식별화 솔루션
 
 InnoLive는 라이브 방송에서 행인의 얼굴과 차량 번호판 노출을 줄입니다. 방송인은 출연자의 얼굴을 미리 등록하고, 영상 처리 과정에서 주변 인물과 번호판을 가립니다.
 
-[웹 체험](https://innolive.studio/) · [소스 코드](https://github.com/orgs/team-framework/repositories) · [English](README.en.md)
+[웹 체험](https://innolive.studio/) · [소스 코드](https://github.com/orgs/team-framework/repositories) · [English](README.en.md) · [README for NAVER OGQ AI COMPETITON](README.ogq.md)
 
 ## 방송 중 개인정보 보호
 
